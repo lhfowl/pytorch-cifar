@@ -54,43 +54,44 @@ testloader = torch.utils.data.DataLoader(
 classes = ('plane', 'car', 'bird', 'cat', 'deer',
            'dog', 'frog', 'horse', 'ship', 'truck')
 
-num_runs = 5
+num_runs = 30
 accs = np.zeros(14)
 for i in range(num_runs):
     new_trainset = sub_dataset(trainset, 500)
     trainloader = torch.utils.data.DataLoader(
         new_trainset, batch_size=32, shuffle=True, num_workers=2)
-    for j in range(1,15):
+    for j in range(14):
         # Model
         print('==> Building model..')
-        if j==1:
+        if j==0:
             net = VGG('VGG19')
-        elif j==2:
+        elif j==1:
             net = ResNet18()
+        elif j==2:
+            #net = PreActResNet18()
+            continue
         elif j==3:
-            net = PreActResNet18()
-        elif j==4:
             net = GoogLeNet()
-        elif j==5:
+        elif j==4:
             net = DenseNet121()
-        elif j==6:
+        elif j==5:
             net = ResNeXt29_2x64d()
-        elif j==7:
+        elif j==6:
             net = MobileNet()
-        elif j==8:
+        elif j==7:
             net = MobileNetV2()
-        elif j==9:
+        elif j==8:
             net = DPN92()
-        elif j==10:
+        elif j==9:
             #net = ShuffleNetG2()
             continue
-        elif j==11:
+        elif j==10:
             net = SENet18()
-        elif j==12:
+        elif j==11:
             net = ShuffleNetV2(1)
-        elif j==13:
+        elif j==12:
             net = EfficientNetB0()
-        elif j==14:
+        elif j==13:
             net = RegNetX_200MF()
         net = net.to(device)
         print(j)
@@ -177,7 +178,6 @@ for i in range(num_runs):
             train(epoch)
             #test(epoch)
         acc = test(epoch)
-        accs[j-1] += acc
+        accs[j] += acc
 accs/= num_runs
 print(accs)
-
