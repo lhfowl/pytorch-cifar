@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import torch.backends.cudnn as cudnn
+import numpy as np
 
 import torchvision
 import torchvision.transforms as transforms
@@ -54,18 +55,19 @@ classes = ('plane', 'car', 'bird', 'cat', 'deer',
            'dog', 'frog', 'horse', 'ship', 'truck')
 
 num_runs = 5
+accs = np.zeros(14)
 for i in range(num_runs):
-    new_trainset = sub_dataset(trainset, 200)
+    new_trainset = sub_dataset(trainset, 500)
     trainloader = torch.utils.data.DataLoader(
         new_trainset, batch_size=32, shuffle=True, num_workers=2)
-    for j in range(1,15) in
+    for j in range(1,15):
         # Model
         print('==> Building model..')
         if j==1:
             net = VGG('VGG19')
         elif j==2:
             net = ResNet18()
-        elif j==3;
+        elif j==3:
             net = PreActResNet18()
         elif j==4:
             net = GoogLeNet()
@@ -80,8 +82,9 @@ for i in range(num_runs):
         elif j==9:
             net = DPN92()
         elif j==10:
-            net = ShuffleNetG2()
-        elif j==11
+            #net = ShuffleNetG2()
+            continue
+        elif j==11:
             net = SENet18()
         elif j==12:
             net = ShuffleNetV2(1)
@@ -174,4 +177,7 @@ for i in range(num_runs):
             train(epoch)
             #test(epoch)
         acc = test(epoch)
-        print(acc)
+        accs[j-1] += acc
+accs/= num_runs
+print(accs)
+
