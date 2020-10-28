@@ -56,6 +56,7 @@ classes = ('plane', 'car', 'bird', 'cat', 'deer',
 
 num_runs = 30
 accs = np.zeros(14)
+net_names = []
 for i in range(num_runs):
     new_trainset = sub_dataset(trainset, 500)
     trainloader = torch.utils.data.DataLoader(
@@ -65,36 +66,50 @@ for i in range(num_runs):
         print('==> Building model..')
         if j==0:
             net = VGG('VGG19')
+            net_names.append('VGG19')
         elif j==1:
             net = ResNet18()
+            net_names.append('ResNet18')
         elif j==2:
             #net = PreActResNet18()
+            net_names.append('PreActResNet18')
             continue
         elif j==3:
             net = GoogLeNet()
+            net_names.append('GoogLeNet')
         elif j==4:
             net = DenseNet121()
+            net_names.append('DenseNet121')
         elif j==5:
             net = ResNeXt29_2x64d()
+            net_names.append('ResNeXt29')
         elif j==6:
             net = MobileNet()
+            net_names.append('MobileNet')
         elif j==7:
             net = MobileNetV2()
+            net_names.append('MobileNetV2')
         elif j==8:
             net = DPN92()
+            net_names.append('DPN92')
         elif j==9:
             #net = ShuffleNetG2()
+            net_names.append('ShuffleNetG2')
             continue
         elif j==10:
             net = SENet18()
+            net_names.append('SENet18')
         elif j==11:
             net = ShuffleNetV2(1)
+            net_names.append('ShuffleNetV2')
         elif j==12:
             net = EfficientNetB0()
+            net_names.append('EfficientNetB0')
         elif j==13:
             net = RegNetX_200MF()
+            net_names.append('RegNetX_200')
         net = net.to(device)
-        print(j)
+
         if device == 'cuda':
             net = torch.nn.DataParallel(net)
             cudnn.benchmark = True
@@ -157,21 +172,7 @@ for i in range(num_runs):
                     progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                                  % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
-            # Save checkpoint.
             acc = 100.*correct/total
-            '''
-            if acc > best_acc:
-                print('Saving..')
-                state = {
-                    'net': net.state_dict(),
-                    'acc': acc,
-                    'epoch': epoch,
-                }
-                if not os.path.isdir('checkpoint'):
-                    os.mkdir('checkpoint')
-                torch.save(state, './checkpoint/ckpt.pth')
-                best_acc = acc
-            '''
             return acc
 
         for epoch in range(start_epoch, start_epoch+100):
@@ -179,5 +180,6 @@ for i in range(num_runs):
             #test(epoch)
         acc = test(epoch)
         accs[j] += acc
+
 accs/= num_runs
 print(accs)
