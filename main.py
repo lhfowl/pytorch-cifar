@@ -54,11 +54,11 @@ testloader = torch.utils.data.DataLoader(
 classes = ('plane', 'car', 'bird', 'cat', 'deer',
            'dog', 'frog', 'horse', 'ship', 'truck')
 
-num_runs = 30
+num_runs = 1
 accs = np.zeros(14)
 net_names = []
 for i in range(num_runs):
-    new_trainset = sub_dataset(trainset, 500)
+    new_trainset = sub_dataset(trainset)
     trainloader = torch.utils.data.DataLoader(
         new_trainset, batch_size=32, shuffle=True, num_workers=2)
     for j in range(14):
